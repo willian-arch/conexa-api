@@ -8,6 +8,16 @@ export default async function handler(req, res) {
     const email = req.query.email || "";
     const roomId = req.query.roomId || "";
     const data = req.query.data || "";
+    let dataFormatada = data;
+
+if (data.includes("/")) {
+  const partes = data.split("/");
+
+  if (partes.length === 3) {
+    const [dia, mes, ano] = partes;
+    dataFormatada = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+  }
+}
     const startTime = req.query.startTime || "";
 
     if (!cpf || !roomId || !data || !startTime) {
@@ -19,7 +29,7 @@ export default async function handler(req, res) {
 
     // bloquear horário no passado
     const agora = new Date();
-    const dataHoraReserva = new Date(`${data}T${startTime}:00-03:00`);
+    const dataHoraReserva = new Date(`${dataFormatada}T${startTime}:00-03:00`);
 
     if (isNaN(dataHoraReserva.getTime())) {
       return res.status(400).json({
@@ -162,7 +172,7 @@ export default async function handler(req, res) {
       customerId: Number(customerId),
       personId: Number(personId),
       roomId: Number(roomId),
-      date: data,
+      date: dataFormatada,
       startTime,
       finalTime,
       notes: "Reserva via WhatsApp",
