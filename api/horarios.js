@@ -5,6 +5,16 @@ export default async function handler(req, res) {
 
     const sala = req.query.sala || "";
     const data = req.query.data || "";
+    let dataFormatada = data;
+
+if (data.includes("/")) {
+  const partes = data.split("/");
+
+  if (partes.length === 3) {
+    const [dia, mes, ano] = partes;
+    dataFormatada = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+  }
+}
 
     if (!sala || !data) {
       return res.status(400).json({
@@ -13,8 +23,8 @@ export default async function handler(req, res) {
       });
     }
 
-    const bookingDateTimeFrom = `${data}T00:00:00-03:00`;
-    const bookingDateTimeTo = `${data}T23:59:59-03:00`;
+const bookingDateTimeFrom = `${dataFormatada}T00:00:00-03:00`;
+const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
 
     const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}`;
 
