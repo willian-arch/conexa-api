@@ -87,7 +87,7 @@ if (data === hoje) {
   horarioPassado = inicioSlot <= horarioAtual;
 }
 
-if (!ocupado && !horarioPassado) {
+if (!ocupado && !horarioPassado && inicioSlot !== "23:00") {
   horariosLivres.push(inicioSlot);
 }
     }
