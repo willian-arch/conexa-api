@@ -16,6 +16,20 @@ if (data.includes("/")) {
   }
 }
 
+
+    const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
+
+const dataSelecionada = new Date(`${dataFormatada}T00:00:00`);
+
+if (dataSelecionada < hoje) {
+  return res.status(200).json({
+    status: "data_invalida",
+    horarios_livres: [],
+    mensagem: "⚠️ Não é possível consultar horários em datas passadas.\n\nPor favor, escolha uma data válida."
+  });
+}
+    
     if (!sala || !data) {
       return res.status(400).json({
         status: "erro",
