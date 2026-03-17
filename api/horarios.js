@@ -78,7 +78,7 @@ if (!ocupado && !horarioPassado) {
 }
     }
 
-    horariosLivres = [];
+    horariosLivres.length = 0;
     if (horariosLivres.length === 0) {
   return res.status(200).json({
     status: "sem_horarios",
