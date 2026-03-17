@@ -58,9 +58,24 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
         }
       }
 
-      if (!ocupado) {
-        horariosLivres.push(inicioSlot);
-      }
+      const agora = new Date();
+const hoje = `${String(agora.getDate()).padStart(2, "0")}/${String(agora.getMonth() + 1).padStart(2, "0")}/${agora.getFullYear()}`;
+
+let horarioPassado = false;
+
+if (data === hoje) {
+  const [horaAtual, minutoAtual] = [
+    String(agora.getHours()).padStart(2, "0"),
+    String(agora.getMinutes()).padStart(2, "0")
+  ];
+
+  const horarioAtual = `${horaAtual}:${minutoAtual}`;
+  horarioPassado = inicioSlot <= horarioAtual;
+}
+
+if (!ocupado && !horarioPassado) {
+  horariosLivres.push(inicioSlot);
+}
     }
 
     return res.status(200).json({
