@@ -81,7 +81,7 @@ if (!ocupado && !horarioPassado) {
     return res.status(200).json({
       status: "ok",
       horarios_livres: horariosLivres,
-      mensagem: horariosLivres.join(", ")
+      mensagem: horariosLivres.join("\n")
     });
   } catch (error) {
     return res.status(500).json({
