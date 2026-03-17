@@ -78,11 +78,19 @@ if (!ocupado && !horarioPassado) {
 }
     }
 
-    return res.status(200).json({
-      status: "ok",
-      horarios_livres: horariosLivres,
-      mensagem: horariosLivres.join("\n")
-    });
+    if (horariosLivres.length === 0) {
+  return res.status(200).json({
+    status: "sem_horarios",
+    horarios_livres: [],
+    mensagem: "😕 Não há horários disponíveis para essa data.\n\nPor favor, escolha outra data ou sala."
+  });
+}
+
+return res.status(200).json({
+  status: "ok",
+  horarios_livres: horariosLivres,
+  mensagem: horariosLivres.join("\n")
+});
   } catch (error) {
     return res.status(500).json({
       status: "erro",
