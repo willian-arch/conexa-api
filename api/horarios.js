@@ -71,12 +71,13 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
 
     const result = await response.json();
     const reservas = result?.data || [];
-    return res.status(200).json({
-  status: "debug",
-  sala,
-  data,
-  dataFormatada,
-  reservas
+    const reservasFiltradas = reservas.filter((reserva) => {
+  const dataReserva = reserva.startTime?.split("T")[0];
+
+  const ativa = reserva.isActive === true;
+  const naoCancelada = reserva.status !== "cancelled";
+
+  return dataReserva === dataFormatada && ativa && naoCancelada;
 });
 
     const horariosLivres = [];
@@ -86,7 +87,7 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
 
       let ocupado = false;
 
-      for (const reserva of reservas) {
+      for (const reserva of reservasFiltradas) {
         const inicioReserva = new Date(reserva.startTime)
           .toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
         const fimReserva = new Date(reserva.finalTime)
