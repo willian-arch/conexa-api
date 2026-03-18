@@ -10,10 +10,29 @@ export default async function handler(req, res) {
 if (data.includes("/")) {
   const partes = data.split("/");
 
-  if (partes.length === 3) {
-    const [dia, mes, ano] = partes;
-    dataFormatada = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+  if (partes.length !== 3) {
+    return res.status(200).json({
+      status: "data_invalida",
+      horarios_livres: [],
+      mensagem: "⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: 20/03/2026"
+    });
   }
+
+  const [dia, mes, ano] = partes;
+
+  if (
+    dia.length !== 2 ||
+    mes.length !== 2 ||
+    ano.length !== 4
+  ) {
+    return res.status(200).json({
+      status: "data_invalida",
+      horarios_livres: [],
+      mensagem: "⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: 20/03/2026"
+    });
+  }
+
+  dataFormatada = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
 }
 
 
