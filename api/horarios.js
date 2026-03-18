@@ -99,15 +99,18 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
         }
       }
 
-      const agora = new Date();
-const hoje = `${String(agora.getDate()).padStart(2, "0")}/${String(agora.getMonth() + 1).padStart(2, "0")}/${agora.getFullYear()}`;
+      const agoraRecife = new Date(
+  new Date().toLocaleString("en-US", { timeZone: "America/Recife" })
+);
+
+const hoje = `${String(agoraRecife.getDate()).padStart(2, "0")}/${String(agoraRecife.getMonth() + 1).padStart(2, "0")}/${agoraRecife.getFullYear()}`;
 
 let horarioPassado = false;
 
 if (data === hoje) {
   const [horaAtual, minutoAtual] = [
-    String(agora.getHours()).padStart(2, "0"),
-    String(agora.getMinutes()).padStart(2, "0")
+    String(agoraRecife.getHours()).padStart(2, "0"),
+    String(agoraRecife.getMinutes()).padStart(2, "0")
   ];
 
   const horarioAtual = `${horaAtual}:${minutoAtual}`;
