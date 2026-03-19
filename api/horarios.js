@@ -72,6 +72,17 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
     const result = await response.json();
     const reservas = result?.data || [];
     const reservasFiltradas = reservas.filter((reserva) => {
+
+
+      return res.status(200).json({
+  status: "debug",
+  sala,
+  data,
+  dataFormatada,
+  reservasFiltradas
+});
+
+      
   const dataReserva = reserva.startTime?.split("T")[0];
 
   const ativa = reserva.isActive === true;
