@@ -94,6 +94,8 @@ do {
 
     const diaSemanaConsulta = new Date(`${dataFormatada}T00:00:00`).getDay();
 
+const dataConsultaObj = new Date(`${dataFormatada}T00:00:00`);
+
 const reservasRecorrentesMesmoDia = reservas
   .filter((reserva) => {
     if (!reserva.idRecurringBooking) return false;
@@ -103,10 +105,24 @@ const reservasRecorrentesMesmoDia = reservas
     const dataReserva = reserva.startTime?.split("T")[0];
     if (!dataReserva) return false;
 
-    const diaSemanaReserva = new Date(`${dataReserva}T00:00:00`).getDay();
+    const dataReservaObj = new Date(`${dataReserva}T00:00:00`);
+    const diaSemanaReserva = dataReservaObj.getDay();
 
-    return diaSemanaReserva === diaSemanaConsulta;
+    // só considerar recorrências do mesmo dia da semana
+    if (diaSemanaReserva !== diaSemanaConsulta) return false;
+
+    // só considerar recorrências "recentes" (últimos 90 dias)
+    const diferencaDias = Math.floor(
+      (dataConsultaObj - dataReservaObj) / (1000 * 60 * 60 * 24)
+    );
+
+    return diferencaDias >= 0 && diferencaDias <= 90;
   })
+  .map((reserva) => ({
+    inicio: reserva.startTime.split("T")[1].slice(0, 5),
+    fim: reserva.finalTime.split("T")[1].slice(0, 5),
+    recorrencia: reserva.idRecurringBooking
+  }));
   .map((reserva) => ({
     inicio: reserva.startTime.split("T")[1].slice(0, 5),
     fim: reserva.finalTime.split("T")[1].slice(0, 5),
