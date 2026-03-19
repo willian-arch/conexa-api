@@ -92,19 +92,26 @@ do {
   return dataReserva === dataFormatada && ativa && naoCancelada;
 });
 
+    const diaSemanaConsulta = new Date(`${dataFormatada}T00:00:00`).getDay();
 
+const reservasRecorrentesMesmoDia = reservas
+  .filter((reserva) => {
+    if (!reserva.idRecurringBooking) return false;
+    if (reserva.isActive !== true) return false;
+    if (reserva.status === "cancelled") return false;
 
+    const dataReserva = reserva.startTime?.split("T")[0];
+    if (!dataReserva) return false;
 
-    return res.status(200).json({
-  status: "debug",
-  sala,
-  data,
-  dataFormatada,
-  reservas
-});
-    
+    const diaSemanaReserva = new Date(`${dataReserva}T00:00:00`).getDay();
 
-    
+    return diaSemanaReserva === diaSemanaConsulta;
+  })
+  .map((reserva) => ({
+    inicio: reserva.startTime.split("T")[1].slice(0, 5),
+    fim: reserva.finalTime.split("T")[1].slice(0, 5),
+    recorrencia: reserva.idRecurringBooking
+  }));
 
     const horariosLivres = [];
 
@@ -114,14 +121,23 @@ do {
       let ocupado = false;
 
       for (const reserva of reservasFiltradas) {
-        const inicioReserva = reserva.startTime.split("T")[1].slice(0, 5);
-const fimReserva = reserva.finalTime.split("T")[1].slice(0, 5);
+  const inicioReserva = reserva.startTime.split("T")[1].slice(0, 5);
+  const fimReserva = reserva.finalTime.split("T")[1].slice(0, 5);
 
-        if (inicioSlot >= inicioReserva && inicioSlot < fimReserva) {
-          ocupado = true;
-          break;
-        }
-      }
+  if (inicioSlot >= inicioReserva && inicioSlot < fimReserva) {
+    ocupado = true;
+    break;
+  }
+}
+
+if (!ocupado) {
+  for (const recorrente of reservasRecorrentesMesmoDia) {
+    if (inicioSlot >= recorrente.inicio && inicioSlot < recorrente.fim) {
+      ocupado = true;
+      break;
+    }
+  }
+}
 
       const agoraRecife = new Date(
   new Date().toLocaleString("en-US", { timeZone: "America/Recife" })
