@@ -88,10 +88,8 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
       let ocupado = false;
 
       for (const reserva of reservasFiltradas) {
-        const inicioReserva = new Date(reserva.startTime)
-          .toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
-        const fimReserva = new Date(reserva.finalTime)
-          .toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false });
+        const inicioReserva = reserva.startTime.split("T")[1].slice(0, 5);
+const fimReserva = reserva.finalTime.split("T")[1].slice(0, 5);
 
         if (inicioSlot >= inicioReserva && inicioSlot < fimReserva) {
           ocupado = true;
