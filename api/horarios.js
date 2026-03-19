@@ -89,7 +89,7 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
   sala,
   data,
   dataFormatada,
-  reservasFiltradas
+  reservas
 });
     
 
