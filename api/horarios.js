@@ -61,16 +61,27 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
 
     const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
 
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
+    let reservas = [];
+let page = 1;
+let totalPages = 1;
 
-    const result = await response.json();
-    const reservas = result?.data || [];
+do {
+  const urlPaginada = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
+
+  const response = await fetch(urlPaginada, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  const result = await response.json();
+
+  reservas = reservas.concat(result?.data || []);
+  totalPages = result?.pagination?.totalPages || 1;
+  page++;
+} while (page <= totalPages);
     const reservasFiltradas = reservas.filter((reserva) => {
       
   const dataReserva = reserva.startTime?.split("T")[0];
