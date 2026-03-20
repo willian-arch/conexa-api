@@ -109,11 +109,7 @@ const reservasRecorrentesMesmoDia = reservas
 
     if (diaSemanaReserva !== diaSemanaConsulta) return false;
 
-    const diferencaDias = Math.floor(
-      (dataConsultaObj - dataReservaObj) / (1000 * 60 * 60 * 24)
-    );
-
-    return diferencaDias >= 0 && diferencaDias <= 90;
+    return diaSemanaReserva === diaSemanaConsulta;
   })
   .map((reserva) => ({
     inicio: reserva.startTime.split("T")[1].slice(0, 5),
