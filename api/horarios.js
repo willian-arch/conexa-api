@@ -93,29 +93,34 @@ do {
 
     const diaSemanaConsulta = new Date(`${dataFormatada}T00:00:00`).getDay();
 
-const dataConsultaObj = new Date(`${dataFormatada}T00:00:00`);
+const recorrenciasMap = new Map();
 
-const reservasRecorrentesMesmoDia = reservas
-  .filter((reserva) => {
-    if (!reserva.idRecurringBooking) return false;
-    if (reserva.isActive !== true) return false;
-    if (reserva.status === "cancelled") return false;
+for (const reserva of reservas) {
+  if (!reserva.idRecurringBooking) continue;
+  if (reserva.isActive !== true) continue;
+  if (reserva.status === "cancelled") continue;
 
-    const dataReserva = reserva.startTime?.split("T")[0];
-    if (!dataReserva) return false;
+  const dataReserva = reserva.startTime?.split("T")[0];
+  if (!dataReserva) continue;
 
-    const dataReservaObj = new Date(`${dataReserva}T00:00:00`);
-    const diaSemanaReserva = dataReservaObj.getDay();
+  const dataReservaObj = new Date(`${dataReserva}T00:00:00`);
+  const diaSemanaReserva = dataReservaObj.getDay();
 
-    if (diaSemanaReserva !== diaSemanaConsulta) return false;
+  if (diaSemanaReserva !== diaSemanaConsulta) continue;
 
-    return diaSemanaReserva === diaSemanaConsulta;
-  })
-  .map((reserva) => ({
-    inicio: reserva.startTime.split("T")[1].slice(0, 5),
-    fim: reserva.finalTime.split("T")[1].slice(0, 5),
-    recorrencia: reserva.idRecurringBooking
-  }));
+  const idRec = reserva.idRecurringBooking;
+  const existente = recorrenciasMap.get(idRec);
+
+  if (!existente || new Date(reserva.startTime) > new Date(existente.startTime)) {
+    recorrenciasMap.set(idRec, reserva);
+  }
+}
+
+const reservasRecorrentesMesmoDia = Array.from(recorrenciasMap.values()).map((reserva) => ({
+  inicio: reserva.startTime.split("T")[1].slice(0, 5),
+  fim: reserva.finalTime.split("T")[1].slice(0, 5),
+  recorrencia: reserva.idRecurringBooking
+}));
 
     const horariosLivres = [];
 
