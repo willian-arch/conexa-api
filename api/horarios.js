@@ -122,6 +122,17 @@ const reservasRecorrentesMesmoDia = Array.from(recorrenciasMap.values()).map((re
   recorrencia: reserva.idRecurringBooking
 }));
 
+
+
+    return res.status(200).json({
+  status: "debug_recorrencias",
+  sala,
+  data,
+  reservasRecorrentesMesmoDia
+});
+
+    
+
     const horariosLivres = [];
 
     for (let hora = 0; hora < 24; hora++) {
