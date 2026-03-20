@@ -123,16 +123,6 @@ const reservasRecorrentesMesmoDia = Array.from(recorrenciasMap.values()).map((re
 }));
 
 
-
-    return res.status(200).json({
-  status: "debug_recorrencias",
-  sala,
-  data,
-  reservasRecorrentesMesmoDia
-});
-
-    
-
     const horariosLivres = [];
 
     for (let hora = 0; hora < 24; hora++) {
@@ -150,14 +140,7 @@ const reservasRecorrentesMesmoDia = Array.from(recorrenciasMap.values()).map((re
   }
 }
 
-if (!ocupado) {
-  for (const recorrente of reservasRecorrentesMesmoDia) {
-    if (inicioSlot >= recorrente.inicio && inicioSlot < recorrente.fim) {
-      ocupado = true;
-      break;
-    }
-  }
-}
+// recorrências temporariamente desativadas
 
       const agoraRecife = new Date(
   new Date().toLocaleString("en-US", { timeZone: "America/Recife" })
