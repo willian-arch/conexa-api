@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const token = "1677b69f512ce335777d2e34185ff9231970e30bb709a01876c0c18acd47650b";
     const subdominio = "coworkingvidanova";
