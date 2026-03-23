@@ -125,7 +125,19 @@ const reservasRecorrentesMesmoDia = Array.from(recorrenciasMap.values()).map((re
 
     const horariosLivres = [];
 
-    for (let hora = 0; hora < 24; hora++) {
+
+    const diaSemana = new Date(`${dataFormatada}T00:00:00`).getDay();
+
+// 0 = domingo
+if (diaSemana === 0) {
+  return res.status(200).json({
+    status: "fechado",
+    horarios_livres: [],
+    mensagem: "🚫 Não há atendimento aos domingos.\n\nPor favor, escolha outro dia."
+  });
+}
+    
+    for (let hora = 8; hora <= 21; hora++) {
       const inicioSlot = `${String(hora).padStart(2, "0")}:00`;
 
       let ocupado = false;
@@ -160,7 +172,7 @@ if (data === hoje) {
   horarioPassado = inicioSlot <= horarioAtual;
 }
 
-if (!ocupado && !horarioPassado && inicioSlot !== "23:00") {
+if (!ocupado && !horarioPassado) {
   horariosLivres.push(inicioSlot);
 }
     }
