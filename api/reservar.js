@@ -20,6 +20,22 @@ if (data.includes("/")) {
 }
     const startTime = req.query.startTime || "";
 
+    const horarioPermitido = /^([0-1]\d|2[0-3]):[0-5]\d$/.test(startTime);
+
+if (!horarioPermitido) {
+  return res.status(200).json({
+    status: "horario_invalido",
+    mensagem: "⚠️ Horário inválido.\n\nDigite um horário no formato HH:MM."
+  });
+}
+
+if (startTime < "08:00" || startTime > "21:00") {
+  return res.status(200).json({
+    status: "horario_fora_do_expediente",
+    mensagem: "⚠️ Atendemos de segunda a sábado, das 08:00 às 21:00.\n\nPor favor, escolha um horário dentro desse período."
+  });
+}
+
     if (!cpf || !roomId || !data || !startTime) {
       return res.status(400).json({
         status: "erro",
