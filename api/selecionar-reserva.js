@@ -41,36 +41,58 @@ export default async function handler(req, res) {
     const result1 = await response1.json();
     reservas = result1?.data || [];
 
-    // 🔥 filtra cliente
-    let reservasCliente = reservas.filter(r =>
-      String(r.customerId) === String(customerId)
-    );
+   // 🔥 filtra cliente
+let reservasCliente = reservas.filter(r =>
+  String(r.customerId) === String(customerId)
+);
 
-    // 🔥 PAGE 2 só se precisar
-    if (reservasCliente.length === 0) {
-      const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=2`;
+// 🔥 já filtra futuras válidas da página 1
+const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
 
-      const response2 = await fetch(urlPage2, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
+let reservasFuturas = reservasCliente.filter((r) => {
+  if (!r.startTime) return false;
+  if (!r.isActive) return false;
+  if (r.status === "cancelled") return false;
 
-      const result2 = await response2.json();
-      reservas = reservas.concat(result2?.data || []);
+  const dataReserva = new Date(r.startTime);
+  dataReserva.setHours(0, 0, 0, 0);
 
-      reservasCliente = reservas.filter(r =>
-        String(r.customerId) === String(customerId)
-      );
+  return dataReserva >= hoje;
+});
+
+// 🔥 PAGE 2 só se ainda não encontrou reserva futura válida
+if (reservasFuturas.length === 0) {
+  const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=2`;
+
+  const response2 = await fetch(urlPage2, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
     }
+  });
 
-    // 🔥 filtro de futuras
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+  const result2 = await response2.json();
+  reservas = reservas.concat(result2?.data || []);
 
-    const reservasFuturas = reservasCliente.filter((r) => {
+  reservasCliente = reservas.filter(r =>
+    String(r.customerId) === String(customerId)
+  );
+
+  reservasFuturas = reservasCliente.filter((r) => {
+    if (!r.startTime) return false;
+    if (!r.isActive) return false;
+    if (r.status === "cancelled") return false;
+
+    const dataReserva = new Date(r.startTime);
+    dataReserva.setHours(0, 0, 0, 0);
+
+    return dataReserva >= hoje;
+  });
+}
+
+  
       if (!r.startTime) return false;
       if (!r.isActive) return false;
       if (r.status === "cancelled") return false;
