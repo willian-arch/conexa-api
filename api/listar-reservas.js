@@ -94,7 +94,7 @@ if (reservasCliente.length === 0) {
       const hora = r.startTime.split("T")[1].slice(0, 5);
       const sala = r.place?.name || "Sala";
 
-      return `${i + 1} - ${sala} | ${dataBr} às ${hora}`;
+      return `#${i + 1} | ${sala}\n📅 ${dataBr}\n⏰ ${hora}`;
     });
 
     return res.status(200).json({
