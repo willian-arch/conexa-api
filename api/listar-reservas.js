@@ -13,68 +13,41 @@ export default async function handler(req, res) {
     }
 
     let reservas = [];
-let page = 1;
-let totalPages = 1;
-const maxPages = 10;
+    let page = 1;
+    let totalPages = 1;
+    const maxPages = 10;
 
-do {
-  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
+    do {
+      const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  });
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
 
-  const result = await response.json();
+      const result = await response.json();
 
-  reservas = reservas.concat(result?.data || []);
-  totalPages = result?.pagination?.totalPages || 1;
-  page++;
-} while (page <= totalPages && page <= maxPages);
+      reservas = reservas.concat(result?.data || []);
+      totalPages = result?.pagination?.totalPages || 1;
+      page++;
+    } while (page <= totalPages && page <= maxPages);
 
-
-
-    return res.status(200).json({
-  status: "debug_total",
-  total: reservas.length,
-  totalPages,
-  paginasBuscadas: Math.min(totalPages, maxPages)
-});
-
-
-    
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-
-    const result = await response.json();
-
-    const reservas = result?.data || [];
-
-    
-
-    // pegar só futuras
     const hoje = new Date();
-hoje.setHours(0, 0, 0, 0);
+    hoje.setHours(0, 0, 0, 0);
 
-const reservasFuturas = reservas.filter((r) => {
-  if (!r.startTime) return false;
-  if (!r.isActive) return false;
-  if (r.status === "cancelled") return false;
+    const reservasFuturas = reservas.filter((r) => {
+      if (!r.startTime) return false;
+      if (!r.isActive) return false;
+      if (r.status === "cancelled") return false;
 
-  const dataReserva = new Date(r.startTime);
-  dataReserva.setHours(0, 0, 0, 0);
+      const dataReserva = new Date(r.startTime);
+      dataReserva.setHours(0, 0, 0, 0);
 
-  return dataReserva >= hoje;
-});
+      return dataReserva >= hoje;
+    });
 
     if (reservasFuturas.length === 0) {
       return res.status(200).json({
