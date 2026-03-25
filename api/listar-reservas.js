@@ -24,7 +24,7 @@ const dataFinal = dataFinalObj.toISOString().split("T")[0];
 const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 
-const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
+const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?customerId=${encodeURIComponent(customerId)}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
 
 const response = await fetch(url, {
   method: "GET",
