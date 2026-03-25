@@ -87,7 +87,10 @@ if (reservasCliente.length === 0) {
     }
 
     const lista = reservasFuturas.map((r, i) => {
-      const data = r.startTime.split("T")[0];
+      const dataBr = (() => {
+  const [ano, mes, dia] = r.startTime.split("T")[0].split("-");
+  return `${dia}/${mes}/${ano}`;
+})();
       const hora = r.startTime.split("T")[1].slice(0, 5);
       const sala = r.place?.name || "Sala";
 
