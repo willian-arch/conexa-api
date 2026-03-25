@@ -13,11 +13,11 @@ export default async function handler(req, res) {
     }
 
     
-   const hoje = new Date();
-hoje.setHours(0, 0, 0, 0);
+   const hojeBusca = new Date();
+hojeBusca.setHours(0, 0, 0, 0);
 
-const dataInicial = hoje.toISOString().split("T")[0];
-const dataFinalObj = new Date(hoje);
+const dataInicial = hojeBusca.toISOString().split("T")[0];
+const dataFinalObj = new Date(hojeBusca);
 dataFinalObj.setMonth(dataFinalObj.getMonth() + 3);
 const dataFinal = dataFinalObj.toISOString().split("T")[0];
 
