@@ -18,24 +18,29 @@ hojeBusca.setHours(0, 0, 0, 0);
 
 const dataInicial = hojeBusca.toISOString().split("T")[0];
 const dataFinalObj = new Date(hojeBusca);
-dataFinalObj.setMonth(dataFinalObj.getMonth() + 3);
+dataFinalObj.setDate(dataFinalObj.getDate() + 45);
 const dataFinal = dataFinalObj.toISOString().split("T")[0];
 
 const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 
-const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?customerId=${encodeURIComponent(customerId)}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
+let reservas = [];
+const maxPages = 3;
 
-const response = await fetch(url, {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json"
-  }
-});
+for (let page = 1; page <= maxPages; page++) {
+  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
 
-const result = await response.json();
-const reservas = result?.data || [];
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  const result = await response.json();
+  reservas = reservas.concat(result?.data || []);
+}
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
