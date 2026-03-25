@@ -24,9 +24,9 @@ const dataFinal = dataFinalObj.toISOString().split("T")[0];
 const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 
-const primeiraUrl = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
+const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
 
-const primeiraResponse = await fetch(primeiraUrl, {
+const response = await fetch(url, {
   method: "GET",
   headers: {
     Authorization: `Bearer ${token}`,
@@ -34,28 +34,8 @@ const primeiraResponse = await fetch(primeiraUrl, {
   }
 });
 
-const primeiroResult = await primeiraResponse.json();
-const totalPages = primeiroResult?.pagination?.totalPages || 1;
-
-let reservas = primeiroResult?.data || [];
-
-const paginasParaBuscar = 5;
-const ultimaPagina = Math.min(totalPages, paginasParaBuscar);
-
-for (let page = 2; page <= ultimaPagina; page++) {
-  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
-
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  });
-
-  const result = await response.json();
-  reservas = reservas.concat(result?.data || []);
-}
+const result = await response.json();
+const reservas = result?.data || [];
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
