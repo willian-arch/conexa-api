@@ -26,6 +26,18 @@ export default async function handler(req, res) {
 
     const reservas = result?.data || [];
 
+
+
+    return res.status(200).json({
+  status: "debug",
+  customerId,
+  total: reservas.length,
+  reservas
+});
+
+
+    
+
     // pegar só futuras
     const hoje = new Date();
 hoje.setHours(0, 0, 0, 0);
