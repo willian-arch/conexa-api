@@ -76,13 +76,14 @@ export default async function handler(req, res) {
     const customerId = customer?.customerId || null;
 
     if (customerId) {
-      return res.status(200).json({
-        status: "cliente_encontrado",
-        mensagem: "Cadastro localizado com sucesso.",
-        customerId,
-        nome: customer?.name || ""
-      });
-    }
+  return res.status(200).json({
+    status: "cliente_encontrado",
+    mensagem: "Cadastro localizado com sucesso.",
+    customerId,
+    personId: customer?.personId || null,
+    nome: customer?.name || ""
+  });
+}
 
     return res.status(200).json({
       status: "nao_encontrado",
