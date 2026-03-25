@@ -12,6 +12,18 @@ export default async function handler(req, res) {
       });
     }
 
+
+
+
+    return res.status(200).json({
+  status: "teste_rapido",
+  mensagem: "API respondeu rápido"
+});
+
+    
+
+
+    
    const primeiraUrl = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=1`;
 
 const primeiraResponse = await fetch(primeiraUrl, {
