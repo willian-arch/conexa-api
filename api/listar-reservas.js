@@ -49,6 +49,22 @@ export default async function handler(req, res) {
       return dataReserva >= hoje;
     });
 
+    
+
+
+    return res.status(200).json({
+  status: "debug_futuras",
+  totalReservas: reservas.length,
+  totalFuturas: reservasFuturas.length,
+  primeiraFutura: reservasFuturas[0] || null,
+  ultimaReserva: reservas[reservas.length - 1] || null
+});
+
+    
+    
+
+    
+    
     if (reservasFuturas.length === 0) {
       return res.status(200).json({
         status: "sem_reservas",
