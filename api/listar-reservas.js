@@ -29,10 +29,9 @@ export default async function handler(req, res) {
 
 
     return res.status(200).json({
-  status: "debug",
-  customerId,
-  total: reservas.length,
-  reservas
+  status: "debug_ids",
+  customerIdRecebido: customerId,
+  exemploReserva: reservas[0]
 });
 
 
