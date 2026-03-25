@@ -27,15 +27,19 @@ export default async function handler(req, res) {
     const reservas = result?.data || [];
 
     // pegar só futuras
-    const agora = new Date();
+    const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
 
-    const reservasFuturas = reservas.filter((r) => {
-      if (!r.startTime) return false;
-      if (!r.isActive) return false;
-      if (r.status === "cancelled") return false;
+const reservasFuturas = reservas.filter((r) => {
+  if (!r.startTime) return false;
+  if (!r.isActive) return false;
+  if (r.status === "cancelled") return false;
 
-      return new Date(r.startTime) >= agora;
-    });
+  const dataReserva = new Date(r.startTime);
+  dataReserva.setHours(0, 0, 0, 0);
+
+  return dataReserva >= hoje;
+});
 
     if (reservasFuturas.length === 0) {
       return res.status(200).json({
