@@ -15,6 +15,7 @@ export default async function handler(req, res) {
     let reservas = [];
 let page = 1;
 let totalPages = 1;
+const maxPages = 10;
 
 do {
   const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
@@ -32,7 +33,19 @@ do {
   reservas = reservas.concat(result?.data || []);
   totalPages = result?.pagination?.totalPages || 1;
   page++;
-} while (page <= totalPages);
+} while (page <= totalPages && page <= maxPages);
+
+
+
+    return res.status(200).json({
+  status: "debug_total",
+  total: reservas.length,
+  totalPages,
+  paginasBuscadas: Math.min(totalPages, maxPages)
+});
+
+
+    
 
     const response = await fetch(url, {
       method: "GET",
@@ -45,16 +58,6 @@ do {
     const result = await response.json();
 
     const reservas = result?.data || [];
-
-
-
-    return res.status(200).json({
-  status: "debug_total",
-  total: reservas.length,
-  ultimaReserva: reservas[reservas.length - 1],
-  primeiraReserva: reservas[0]
-});
-
 
     
 
