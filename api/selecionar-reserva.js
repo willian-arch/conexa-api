@@ -82,11 +82,16 @@ export default async function handler(req, res) {
     });
 
     if (reservasFuturas.length === 0) {
-      return res.status(200).json({
-        status: "sem_reservas",
-        mensagem: "Você não possui reservas futuras."
-      });
-    }
+  return res.status(200).json({
+    status: "debug_sem_reservas",
+    customerIdRecebido: customerId,
+    totalReservas: reservas.length,
+    totalReservasCliente: reservasCliente.length,
+    totalReservasFuturas: reservasFuturas.length,
+    primeiraReservaCliente: reservasCliente[0] || null,
+    mensagem: "Você não possui reservas futuras."
+  });
+}
 
     const reserva = reservasFuturas[indice - 1];
 
