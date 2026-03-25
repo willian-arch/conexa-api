@@ -18,14 +18,14 @@ hojeBusca.setHours(0, 0, 0, 0);
 
 const dataInicial = hojeBusca.toISOString().split("T")[0];
 const dataFinalObj = new Date(hojeBusca);
-dataFinalObj.setDate(dataFinalObj.getDate() + 45);
+dataFinalObj.setDate(dataFinalObj.getDate() + 30);
 const dataFinal = dataFinalObj.toISOString().split("T")[0];
 
 const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 
 let reservas = [];
-const maxPages = 3;
+const maxPages = 2;
 
 for (let page = 1; page <= maxPages; page++) {
   const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
