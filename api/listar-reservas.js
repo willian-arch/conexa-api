@@ -12,7 +12,27 @@ export default async function handler(req, res) {
       });
     }
 
-    const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=50&page=1`;
+    let reservas = [];
+let page = 1;
+let totalPages = 1;
+
+do {
+  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  const result = await response.json();
+
+  reservas = reservas.concat(result?.data || []);
+  totalPages = result?.pagination?.totalPages || 1;
+  page++;
+} while (page <= totalPages);
 
     const response = await fetch(url, {
       method: "GET",
@@ -29,9 +49,10 @@ export default async function handler(req, res) {
 
 
     return res.status(200).json({
-  status: "ok",
+  status: "debug_total",
   total: reservas.length,
-  reservas
+  ultimaReserva: reservas[reservas.length - 1],
+  primeiraReserva: reservas[0]
 });
 
 
