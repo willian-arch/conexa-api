@@ -18,7 +18,7 @@ hojeBusca.setHours(0, 0, 0, 0);
 
 const dataInicial = hojeBusca.toISOString().split("T")[0];
 const dataFinalObj = new Date(hojeBusca);
-dataFinalObj.setDate(dataFinalObj.getDate() + 30);
+dataFinalObj.setDate(dataFinalObj.getDate() + 15);
 const dataFinal = dataFinalObj.toISOString().split("T")[0];
 
 const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
