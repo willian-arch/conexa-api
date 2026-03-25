@@ -12,29 +12,37 @@ export default async function handler(req, res) {
       });
     }
 
-    let reservas = [];
-    let page = 1;
-    let totalPages = 1;
-    const maxPages = 10;
+   const primeiraUrl = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=1`;
 
-    do {
-      const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
+const primeiraResponse = await fetch(primeiraUrl, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
 
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
+const primeiroResult = await primeiraResponse.json();
+const totalPages = primeiroResult?.pagination?.totalPages || 1;
 
-      const result = await response.json();
+let reservas = [];
+const paginasParaBuscar = 10;
+const paginaInicial = Math.max(1, totalPages - paginasParaBuscar + 1);
 
-      reservas = reservas.concat(result?.data || []);
-      totalPages = result?.pagination?.totalPages || 1;
-      page++;
-    } while (page <= totalPages && page <= maxPages);
+for (let page = paginaInicial; page <= totalPages; page++) {
+  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
 
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  const result = await response.json();
+  reservas = reservas.concat(result?.data || []);
+}
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
@@ -49,21 +57,6 @@ export default async function handler(req, res) {
       return dataReserva >= hoje;
     });
 
-    
-
-
-    return res.status(200).json({
-  status: "debug_futuras",
-  totalReservas: reservas.length,
-  totalFuturas: reservasFuturas.length,
-  primeiraFutura: reservasFuturas[0] || null,
-  ultimaReserva: reservas[reservas.length - 1] || null
-});
-
-    
-    
-
-    
     
     if (reservasFuturas.length === 0) {
       return res.status(200).json({
