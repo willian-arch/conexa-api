@@ -105,12 +105,7 @@ if (reservasFuturas.length === 0) {
 
     if (reservasFuturas.length === 0) {
   return res.status(200).json({
-    status: "debug_sem_reservas",
-    customerIdRecebido: customerId,
-    totalReservas: reservas.length,
-    totalReservasCliente: reservasCliente.length,
-    totalReservasFuturas: reservasFuturas.length,
-    primeiraReservaCliente: reservasCliente[0] || null,
+    status: "sem_reservas",
     mensagem: "Você não possui reservas futuras."
   });
 }
