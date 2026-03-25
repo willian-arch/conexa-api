@@ -25,12 +25,31 @@ const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 
 let reservas = [];
-const maxPages = 2;
 
-for (let page = 1; page <= maxPages; page++) {
-  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
+// 🔥 PAGE 1 (rápido)
+const urlPage1 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
 
-  const response = await fetch(url, {
+const response1 = await fetch(urlPage1, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
+
+const result1 = await response1.json();
+reservas = result1?.data || [];
+
+// 🔥 filtra já aqui
+let reservasCliente = reservas.filter(r =>
+  String(r.customerId) === String(customerId)
+);
+
+// 🔥 só busca página 2 se precisar
+if (reservasCliente.length === 0) {
+  const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=2`;
+
+  const response2 = await fetch(urlPage2, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -38,13 +57,17 @@ for (let page = 1; page <= maxPages; page++) {
     }
   });
 
-  const result = await response.json();
-  reservas = reservas.concat(result?.data || []);
+  const result2 = await response2.json();
+  reservas = reservas.concat(result2?.data || []);
+
+  reservasCliente = reservas.filter(r =>
+    String(r.customerId) === String(customerId)
+  );
 }
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
-    const reservasFuturas = reservas.filter((r) => {
+    const reservasFuturas = reservasCliente.filter((r) => {
   if (!r.startTime) return false;
   if (!r.isActive) return false;
   if (r.status === "cancelled") return false;
