@@ -13,9 +13,24 @@ export default async function handler(req, res) {
       });
     }
 
-    const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?customerId=${customerId}&size=50&page=1`;
+    // 🔥 PERÍODO (30 dias)
+    const hojeBusca = new Date();
+    hojeBusca.setHours(0, 0, 0, 0);
 
-    const response = await fetch(url, {
+    const dataInicial = hojeBusca.toISOString().split("T")[0];
+    const dataFinalObj = new Date(hojeBusca);
+    dataFinalObj.setDate(dataFinalObj.getDate() + 30);
+    const dataFinal = dataFinalObj.toISOString().split("T")[0];
+
+    const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
+    const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
+
+    let reservas = [];
+
+    // 🔥 PAGE 1
+    const urlPage1 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
+
+    const response1 = await fetch(urlPage1, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -23,16 +38,47 @@ export default async function handler(req, res) {
       }
     });
 
-    const result = await response.json();
-    const reservas = result?.data || [];
+    const result1 = await response1.json();
+    reservas = result1?.data || [];
 
-    const agora = new Date();
+    // 🔥 filtra cliente
+    let reservasCliente = reservas.filter(r =>
+      String(r.customerId) === String(customerId)
+    );
 
-    const reservasFuturas = reservas.filter((r) => {
+    // 🔥 PAGE 2 só se precisar
+    if (reservasCliente.length === 0) {
+      const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=2`;
+
+      const response2 = await fetch(urlPage2, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      const result2 = await response2.json();
+      reservas = reservas.concat(result2?.data || []);
+
+      reservasCliente = reservas.filter(r =>
+        String(r.customerId) === String(customerId)
+      );
+    }
+
+    // 🔥 filtro de futuras
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const reservasFuturas = reservasCliente.filter((r) => {
       if (!r.startTime) return false;
       if (!r.isActive) return false;
       if (r.status === "cancelled") return false;
-      return new Date(r.startTime) >= agora;
+
+      const dataReserva = new Date(r.startTime);
+      dataReserva.setHours(0, 0, 0, 0);
+
+      return dataReserva >= hoje;
     });
 
     if (reservasFuturas.length === 0) {
@@ -51,7 +97,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const data = reserva.startTime.split("T")[0];
+    // 🔥 formatar data BR
+    const [ano, mes, dia] = reserva.startTime.split("T")[0].split("-");
+    const dataBr = `${dia}/${mes}/${ano}`;
+
     const hora = reserva.startTime.split("T")[1].slice(0, 5);
     const sala = reserva.place?.name || "Sala";
 
@@ -59,10 +108,11 @@ export default async function handler(req, res) {
       status: "ok",
       bookingId: reserva.bookingId,
       sala,
-      data,
+      data: dataBr,
       hora,
-      mensagem: `Confirme o cancelamento desta reserva:\n\nSala: ${sala}\nData: ${data}\nHorário: ${hora}`
+      mensagem: `Confirme o cancelamento desta reserva:\n\nSala: ${sala}\nData: ${dataBr}\nHorário: ${hora}`
     });
+
   } catch (error) {
     return res.status(500).json({
       status: "erro",
