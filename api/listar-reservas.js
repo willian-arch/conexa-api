@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?customerId=${customerId}&size=50&page=1`;
+    const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=50&page=1`;
 
     const response = await fetch(url, {
       method: "GET",
