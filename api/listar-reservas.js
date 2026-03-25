@@ -25,7 +25,7 @@ const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 
 let reservas = [];
-const maxPages = 2;
+const maxPages = 1;
 
 for (let page = 1; page <= maxPages; page++) {
   const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
