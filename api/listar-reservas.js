@@ -12,19 +12,19 @@ export default async function handler(req, res) {
       });
     }
 
-
-
-
-    return res.status(200).json({
-  status: "teste_rapido",
-  mensagem: "API respondeu rápido"
-});
-
     
+   const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
 
+const dataInicial = hoje.toISOString().split("T")[0];
+const dataFinalObj = new Date(hoje);
+dataFinalObj.setMonth(dataFinalObj.getMonth() + 3);
+const dataFinal = dataFinalObj.toISOString().split("T")[0];
 
-    
-   const primeiraUrl = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=1`;
+const bookingDateTimeFrom = `${dataInicial}T00:00:00-03:00`;
+const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
+
+const primeiraUrl = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
 
 const primeiraResponse = await fetch(primeiraUrl, {
   method: "GET",
@@ -37,12 +37,13 @@ const primeiraResponse = await fetch(primeiraUrl, {
 const primeiroResult = await primeiraResponse.json();
 const totalPages = primeiroResult?.pagination?.totalPages || 1;
 
-let reservas = [];
-const paginasParaBuscar = 10;
-const paginaInicial = Math.max(1, totalPages - paginasParaBuscar + 1);
+let reservas = primeiroResult?.data || [];
 
-for (let page = paginaInicial; page <= totalPages; page++) {
-  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?size=100&page=${page}`;
+const paginasParaBuscar = 5;
+const ultimaPagina = Math.min(totalPages, paginasParaBuscar);
+
+for (let page = 2; page <= ultimaPagina; page++) {
+  const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
 
   const response = await fetch(url, {
     method: "GET",
