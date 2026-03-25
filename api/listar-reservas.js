@@ -60,15 +60,15 @@ for (let page = 2; page <= ultimaPagina; page++) {
     hoje.setHours(0, 0, 0, 0);
 
     const reservasFuturas = reservas.filter((r) => {
-      if (!r.startTime) return false;
-      if (!r.isActive) return false;
-      if (r.status === "cancelled") return false;
+  if (!r.startTime) return false;
+  if (!r.isActive) return false;
+  if (r.status === "cancelled") return false;
 
-      const dataReserva = new Date(r.startTime);
-      dataReserva.setHours(0, 0, 0, 0);
+  const dataReserva = new Date(r.startTime);
+  dataReserva.setHours(0, 0, 0, 0);
 
-      return dataReserva >= hoje;
-    });
+  return dataReserva >= hoje && String(r.customerId) === String(customerId);
+});
 
     
     if (reservasFuturas.length === 0) {
