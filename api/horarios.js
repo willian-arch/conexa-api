@@ -11,12 +11,9 @@ if (data.includes("/")) {
   const partes = data.split("/");
 
   if (partes.length !== 3) {
-    return res.status(200).json({
-      status: "data_invalida",
-      horarios_livres: [],
-     
-      if (partes.length !== 3) {
+
   const hoje = new Date();
+
   const dia = String(hoje.getDate()).padStart(2, "0");
   const mes = String(hoje.getMonth() + 1).padStart(2, "0");
   const ano = hoje.getFullYear();
