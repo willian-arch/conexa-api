@@ -14,7 +14,14 @@ if (data.includes("/")) {
     return res.status(200).json({
       status: "data_invalida",
       horarios_livres: [],
-      mensagem: "⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: 20/03/2026"
+      const hoje = new Date();
+
+const dia = String(hoje.getDate()).padStart(2, "0");
+const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+const ano = hoje.getFullYear();
+
+const dataExemplo = `${dia}/${mes}/${ano}`;
+    mensagem: `⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: ${dataExemplo}`
     });
   }
 
