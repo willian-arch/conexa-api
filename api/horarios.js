@@ -7,43 +7,24 @@ export default async function handler(req, res) {
     const data = req.query.data || "";
     let dataFormatada = data;
 
-if (data.includes("/")) {
-  const partes = data.split("/");
+const hojeMsg = new Date();
+const diaHoje = String(hojeMsg.getDate()).padStart(2, "0");
+const mesHoje = String(hojeMsg.getMonth() + 1).padStart(2, "0");
+const anoHoje = hojeMsg.getFullYear();
+const dataExemplo = `${diaHoje}/${mesHoje}/${anoHoje}`;
 
-  if (partes.length !== 3) {
-
-  const hoje = new Date();
-
-  const dia = String(hoje.getDate()).padStart(2, "0");
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-  const ano = hoje.getFullYear();
-
-  const dataExemplo = `${dia}/${mes}/${ano}`;
-
+if (!/^\d{2}\/\d{2}\/\d{4}$/.test(data)) {
   return res.status(200).json({
     status: "data_invalida",
     horarios_livres: [],
     mensagem: `⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: ${dataExemplo}`
   });
-
 }
 
-  const [dia, mes, ano] = partes;
+const partes = data.split("/");
+const [dia, mes, ano] = partes;
 
-  if (
-    dia.length !== 2 ||
-    mes.length !== 2 ||
-    ano.length !== 4
-  ) {
-    return res.status(200).json({
-      status: "data_invalida",
-      horarios_livres: [],
-      mensagem: "⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: 20/03/2026"
-    });
-  }
-
-  dataFormatada = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
-}
+dataFormatada = `${ano}-${mes}-${dia}`;
 
 
     const hoje = new Date();
