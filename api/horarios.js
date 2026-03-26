@@ -14,16 +14,22 @@ if (data.includes("/")) {
     return res.status(200).json({
       status: "data_invalida",
       horarios_livres: [],
-      const hoje = new Date();
+     
+      if (partes.length !== 3) {
+  const hoje = new Date();
+  const dia = String(hoje.getDate()).padStart(2, "0");
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const ano = hoje.getFullYear();
 
-const dia = String(hoje.getDate()).padStart(2, "0");
-const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-const ano = hoje.getFullYear();
+  const dataExemplo = `${dia}/${mes}/${ano}`;
 
-const dataExemplo = `${dia}/${mes}/${ano}`;
+  return res.status(200).json({
+    status: "data_invalida",
+    horarios_livres: [],
     mensagem: `⚠️ Data inválida.\n\nDigite no formato DD/MM/AAAA.\nExemplo: ${dataExemplo}`
-    });
-  }
+  });
+
+}
 
   const [dia, mes, ano] = partes;
 
