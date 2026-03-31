@@ -76,16 +76,18 @@ if (reservasCliente.length === 0 && hasNextPage1) {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
-    const reservasFuturas = reservasCliente.filter((r) => {
-  if (!r.startTime) return false;
-  if (!r.isActive) return false;
-  if (r.status === "cancelled") return false;
+    const reservasFuturas = reservasCliente
+  .filter((r) => {
+    if (!r.startTime) return false;
+    if (!r.isActive) return false;
+    if (r.status === "cancelled") return false;
 
-  const dataReserva = new Date(r.startTime);
-  dataReserva.setHours(0, 0, 0, 0);
+    const dataReserva = new Date(r.startTime);
+    dataReserva.setHours(0, 0, 0, 0);
 
-  return dataReserva >= hoje && String(r.customerId) === String(customerId);
-});
+    return dataReserva >= hoje && String(r.customerId) === String(customerId);
+  })
+  .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
     
     if (reservasFuturas.length === 0) {
