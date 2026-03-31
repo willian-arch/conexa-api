@@ -37,6 +37,10 @@ const response1 = await fetch(urlPage1, {
   }
 });
 
+if (!response1.ok) {
+  throw new Error(`Erro na Conexa (página 1): ${response1.status}`);
+}
+
 const result1 = await response1.json();
 const hasNextPage1 = result1?.pagination?.hasNext === true;
 reservas = result1?.data || [];
@@ -57,6 +61,10 @@ if (reservasCliente.length === 0 && hasNextPage1) {
       "Content-Type": "application/json"
     }
   });
+
+  if (!response2.ok) {
+  throw new Error(`Erro na Conexa (página 2): ${response2.status}`);
+}
 
   const result2 = await response2.json();
   reservas = reservas.concat(result2?.data || []);
