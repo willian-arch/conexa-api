@@ -64,14 +64,18 @@ export default async function handler(req, res) {
     const url = `https://${subdominio}.conexa.app/index.php/api/v2/customers?${parametro}=${documento}&limit=1&offset=0`;
 
     const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
 
-    const data = await response.json();
+if (!response.ok) {
+  throw new Error(`Erro na Conexa (verificar-cadastro): ${response.status}`);
+}
+
+const data = await response.json();
     const customer = data?.data?.[0] || null;
     const customerId = customer?.customerId || null;
 
