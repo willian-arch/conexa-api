@@ -52,12 +52,14 @@ const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
 
     const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
 
-    let reservas = [];
-let page = 1;
-const maxPages = 3;
+let reservas = [];
+let offset = 0;
+const limit = 100;
+const maxPaginas = 3;
+let paginaAtual = 1;
 
 do {
-  const urlPaginada = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=${page}`;
+  const urlPaginada = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=${limit}&offset=${offset}`;
 
   const response = await fetch(urlPaginada, {
     method: "GET",
@@ -70,8 +72,9 @@ do {
   const result = await response.json();
 
   reservas = reservas.concat(result?.data || []);
-  page++;
-} while (page <= maxPages);
+  offset += limit;
+  paginaAtual++;
+} while (paginaAtual <= maxPaginas);
     const reservasFiltradas = reservas.filter((reserva) => {
       
   const dataReserva = reserva.startTime?.split("T")[0];
