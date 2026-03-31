@@ -97,16 +97,19 @@ if (startTime < "08:00" || startTime > "21:00") {
         emailsMessage: [email]
       };
 
-      const responseNewCustomer = await fetch(urlCreateCustomer, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bodyCustomer)
-      });
+      const responseCustomer = await fetch(urlCustomer, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
 
-      const resultNewCustomer = await responseNewCustomer.json();
+if (!responseCustomer.ok) {
+  throw new Error(`Erro na Conexa (buscar customer): ${responseCustomer.status}`);
+}
+
+const resultCustomer = await responseCustomer.json();
       customerId = resultNewCustomer?.id || null;
 
       if (!customerId) {
