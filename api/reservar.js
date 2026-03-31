@@ -161,16 +161,21 @@ if (!responsePerson.ok) {
       };
 
       const responseNewPerson = await fetch(urlCreatePerson, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bodyPerson)
-      });
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(bodyPerson)
+});
 
-      const resultNewPerson = await responseNewPerson.json();
-      personId = resultNewPerson?.id || null;
+const resultNewPerson = await responseNewPerson.json();
+
+if (!responseNewPerson.ok) {
+  return res.status(500).json(resultNewPerson);
+}
+
+personId = resultNewPerson?.id || null;
 
       if (!personId) {
         return res.status(500).json(resultNewPerson);
