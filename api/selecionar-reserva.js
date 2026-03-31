@@ -35,18 +35,18 @@ export default async function handler(req, res) {
         (r) => String(r.customerId) === String(customerId)
       );
 
-      return reservasCliente.filter((r) => {
-        if (!r.startTime) return false;
-        if (!r.isActive) return false;
-        if (r.status === "cancelled") return false;
+      return reservasCliente
+  .filter((r) => {
+    if (!r.startTime) return false;
+    if (!r.isActive) return false;
+    if (r.status === "cancelled") return false;
 
-        const dataReserva = new Date(r.startTime);
-        dataReserva.setHours(0, 0, 0, 0);
+    const dataReserva = new Date(r.startTime);
+    dataReserva.setHours(0, 0, 0, 0);
 
-        return dataReserva >= hoje;
-      });
-    };
-
+    return dataReserva >= hoje;
+  })
+  .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
     // PAGE 1
     const urlPage1 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=100&offset=0`;
     const response1 = await fetch(urlPage1, {
