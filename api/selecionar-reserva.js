@@ -62,12 +62,13 @@ export default async function handler(req, res) {
     }
 
     const result1 = await response1.json();
+    const hasNextPage1 = result1?.pagination?.hasNext === true;
     reservas = result1?.data || [];
 
     let reservasFuturas = filtrarReservasFuturasValidas(reservas);
 
     // PAGE 2 só se ainda não encontrou reservas válidas
-    if (reservasFuturas.length === 0) {
+    if (reservasFuturas.length === 0 && hasNextPage1) {
       const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=100&offset=100`;
 
       const response2 = await fetch(urlPage2, {
