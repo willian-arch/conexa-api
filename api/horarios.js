@@ -67,6 +67,10 @@ do {
     }
   });
 
+  if (!response.ok) {
+  throw new Error(`Erro na Conexa (horarios): ${response.status}`);
+}
+  
   const result = await response.json();
 
   reservas = reservas.concat(result?.data || []);
