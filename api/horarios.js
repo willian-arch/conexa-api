@@ -50,8 +50,6 @@ if (dataSelecionada < hoje) {
 const bookingDateTimeFrom = `${dataFormatada}T00:00:00-03:00`;
 const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
 
-    const url = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${sala}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
-
 let reservas = [];
 let offset = 0;
 const limit = 100;
