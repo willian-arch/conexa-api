@@ -38,6 +38,7 @@ const response1 = await fetch(urlPage1, {
 });
 
 const result1 = await response1.json();
+const hasNextPage1 = result1?.pagination?.hasNext === true;
 reservas = result1?.data || [];
 
 // 🔥 filtra já aqui
@@ -46,7 +47,7 @@ let reservasCliente = reservas.filter(r =>
 );
 
 // 🔥 só busca página 2 se precisar
-if (reservasCliente.length === 0) {
+if (reservasCliente.length === 0 && hasNextPage1) {
   const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=100&offset=100`;
 
   const response2 = await fetch(urlPage2, {
