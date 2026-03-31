@@ -62,7 +62,7 @@ if (startTime < "08:00" || startTime > "21:00") {
     }
 
     // buscar customer
-    const urlCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customers?cpf=${cpf}`;
+    const urlCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customers?cpf=${cpf}&limit=1&offset=0`;
 
     const responseCustomer = await fetch(urlCustomer, {
       method: "GET",
@@ -115,7 +115,7 @@ if (startTime < "08:00" || startTime > "21:00") {
     }
 
     // buscar person
-    const urlPerson = `https://${subdominio}.conexa.app/index.php/api/v2/persons?cpf=${cpf}`;
+    const urlPerson = `https://${subdominio}.conexa.app/index.php/api/v2/persons?cpf=${cpf}&limit=1&offset=0`;
 
     const responsePerson = await fetch(urlPerson, {
       method: "GET",
