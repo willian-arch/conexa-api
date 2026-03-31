@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     const parametro = documento.length === 14 ? "cnpj" : "cpf";
-    const url = `https://${subdominio}.conexa.app/index.php/api/v2/customers?${parametro}=${documento}`;
+    const url = `https://${subdominio}.conexa.app/index.php/api/v2/customers?${parametro}=${documento}&limit=1&offset=0`;
 
     const response = await fetch(url, {
       method: "GET",
