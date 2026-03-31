@@ -62,7 +62,6 @@ if (startTime < "08:00" || startTime > "21:00") {
     }
 
     // buscar customer
-    // buscar customer
 const urlCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customers?cpf=${cpf}&limit=1&offset=0`;
 
 const responseCustomer = await fetch(urlCustomer, {
@@ -123,13 +122,17 @@ if (!customerId) {
     const urlPerson = `https://${subdominio}.conexa.app/index.php/api/v2/persons?cpf=${cpf}&limit=1&offset=0`;
 
     const responsePerson = await fetch(urlPerson, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
 
+if (!responsePerson.ok) {
+  throw new Error(`Erro na Conexa (buscar person): ${responsePerson.status}`);
+}
+    
     const resultPerson = await responsePerson.json();
     const person = resultPerson?.data?.[0] || null;
     let personId = person?.personId || null;
