@@ -22,19 +22,19 @@ export default async function handler(req, res) {
       }
     });
 
-    const result = await response.json();
+    if (!response.ok) {
+  const result = await response.json();
 
-    if (response.ok) {
-      return res.status(200).json({
-        status: "ok",
-        mensagem: "✅ Sua reserva foi cancelada com sucesso."
-      });
-    }
+  return res.status(200).json({
+    status: "erro_cancelamento",
+    mensagem: result?.message || "Não foi possível cancelar a reserva."
+  });
+}
 
-    return res.status(200).json({
-      status: "erro_cancelamento",
-      mensagem: result?.message || "Não foi possível cancelar a reserva."
-    });
+return res.status(200).json({
+  status: "ok",
+  mensagem: "✅ Sua reserva foi cancelada com sucesso."
+});
   } catch (error) {
     return res.status(500).json({
       status: "erro",
