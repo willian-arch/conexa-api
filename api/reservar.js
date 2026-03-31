@@ -215,37 +215,31 @@ personId = resultNewPerson?.id || null;
     };
 
     const responseReserva = await fetch(urlReserva, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(bodyReserva)
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(bodyReserva)
+});
+
+const resultReserva = await responseReserva.json();
+
+if (!responseReserva.ok) {
+  if (
+    resultReserva?.errors &&
+    Array.isArray(resultReserva.errors) &&
+    resultReserva.errors.some((e) => e.code === "E_UNAVAILABLE_ROOM_ALREADY_BOOKED")
+  ) {
+    return res.status(200).json({
+      status: "horario_indisponivel",
+      mensagem: "⚠️ Esse horário não está mais disponível.\n\nPor favor, escolha outro horário."
     });
+  }
 
-    const resultReserva = await responseReserva.json();
-
-    if (resultReserva?.id) {
-      return res.status(200).json({
-        status: "ok",
-        mensagem: "Reserva concluída com sucesso.",
-        bookingId: resultReserva.id
-      });
-    }
-
-    if (
-  resultReserva?.errors &&
-  Array.isArray(resultReserva.errors) &&
-  resultReserva.errors.some((e) => e.code === "E_UNAVAILABLE_ROOM_ALREADY_BOOKED")
-) {
-  return res.status(200).json({
-    status: "horario_indisponivel",
-    mensagem: "⚠️ Esse horário não está mais disponível.\n\nPor favor, escolha outro horário."
-  });
-}
-
-return res.status(500).json(resultReserva);
-  } catch (error) {
+  return res.status(500).json(resultReserva);
+} 
+    catch (error) {
     return res.status(500).json({
       status: "erro",
       mensagem: "Erro ao criar reserva.",
