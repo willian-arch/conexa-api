@@ -72,10 +72,16 @@ do {
 }
   
   const result = await response.json();
+const hasNext = result?.pagination?.hasNext === true;
 
-  reservas = reservas.concat(result?.data || []);
-  offset += limit;
-  paginaAtual++;
+reservas = reservas.concat(result?.data || []);
+
+if (!hasNext) {
+  break;
+}
+
+offset += limit;
+paginaAtual++;
 } while (paginaAtual <= maxPaginas);
     const reservasFiltradas = reservas.filter((reserva) => {
       
