@@ -102,16 +102,21 @@ if (!customerId) {
   };
 
   const responseNewCustomer = await fetch(urlCreateCustomer, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(bodyCustomer)
-  });
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(bodyCustomer)
+});
 
-  const resultNewCustomer = await responseNewCustomer.json();
-  customerId = resultNewCustomer?.id || null;
+const resultNewCustomer = await responseNewCustomer.json();
+
+if (!responseNewCustomer.ok) {
+  return res.status(500).json(resultNewCustomer);
+}
+
+customerId = resultNewCustomer?.id || null;
 
   if (!customerId) {
     return res.status(500).json(resultNewCustomer);
