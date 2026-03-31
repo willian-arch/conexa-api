@@ -78,38 +78,49 @@ if (startTime < "08:00" || startTime > "21:00") {
 
     // criar customer se não existir
     if (!customerId) {
-      if (!name || !email) {
-        return res.status(400).json({
-          status: "erro",
-          mensagem: "Cliente não encontrado. Envie também nome e email."
-        });
-      }
-
-      const urlCreateCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customer`;
-
-      const bodyCustomer = {
-        companyId: 3,
-        name,
-        tradeName: name,
-        naturalPerson: {
-          cpf
-        },
-        emailsMessage: [email]
-      };
-
-      const responseCustomer = await fetch(urlCustomer, {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json"
+  if (!name || !email) {
+    return res.status(400).json({
+      status: "erro",
+      mensagem: "Cliente não encontrado. Envie também nome e email."
+    });
   }
-});
+
+  const urlCreateCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customer`;
+
+  const bodyCustomer = {
+    companyId: 3,
+    name,
+    tradeName: name,
+    naturalPerson: {
+      cpf
+    },
+    emailsMessage: [email]
+  };
+
+  const responseNewCustomer = await fetch(urlCreateCustomer, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(bodyCustomer)
+  });
+
+  const resultNewCustomer = await responseNewCustomer.json();
+  customerId = resultNewCustomer?.id || null;
+
+  if (!customerId) {
+    return res.status(500).json(resultNewCustomer);
+  }
+}
 
 if (!responseCustomer.ok) {
   throw new Error(`Erro na Conexa (buscar customer): ${responseCustomer.status}`);
 }
 
 const resultCustomer = await responseCustomer.json();
+const customer = resultCustomer?.data?.[0] || null;
+let customerId = customer?.customerId || null;
       customerId = resultNewCustomer?.id || null;
 
       if (!customerId) {
