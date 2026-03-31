@@ -27,7 +27,7 @@ const bookingDateTimeTo = `${dataFinal}T23:59:59-03:00`;
 let reservas = [];
 
 // 🔥 PAGE 1 (rápido)
-const urlPage1 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=1`;
+const urlPage1 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=100&offset=0`;
 
 const response1 = await fetch(urlPage1, {
   method: "GET",
@@ -47,7 +47,7 @@ let reservasCliente = reservas.filter(r =>
 
 // 🔥 só busca página 2 se precisar
 if (reservasCliente.length === 0) {
-  const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&size=100&page=2`;
+  const urlPage2 = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=100&offset=100`;
 
   const response2 = await fetch(urlPage2, {
     method: "GET",
