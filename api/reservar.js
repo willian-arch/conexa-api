@@ -238,8 +238,18 @@ if (!responseReserva.ok) {
   }
 
   return res.status(500).json(resultReserva);
-} 
-    catch (error) {
+}
+
+if (resultReserva?.id) {
+  return res.status(200).json({
+    status: "ok",
+    mensagem: "Reserva concluída com sucesso.",
+    bookingId: resultReserva.id
+  });
+}
+
+return res.status(500).json(resultReserva);
+  } catch (error) {
     return res.status(500).json({
       status: "erro",
       mensagem: "Erro ao criar reserva.",
