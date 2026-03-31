@@ -62,22 +62,27 @@ if (startTime < "08:00" || startTime > "21:00") {
     }
 
     // buscar customer
-    const urlCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customers?cpf=${cpf}&limit=1&offset=0`;
+    // buscar customer
+const urlCustomer = `https://${subdominio}.conexa.app/index.php/api/v2/customers?cpf=${cpf}&limit=1&offset=0`;
 
-    const responseCustomer = await fetch(urlCustomer, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
+const responseCustomer = await fetch(urlCustomer, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }
+});
 
-    const resultCustomer = await responseCustomer.json();
-    const customer = resultCustomer?.data?.[0] || null;
-    let customerId = customer?.customerId || null;
+if (!responseCustomer.ok) {
+  throw new Error(`Erro na Conexa (buscar customer): ${responseCustomer.status}`);
+}
 
-    // criar customer se não existir
-    if (!customerId) {
+const resultCustomer = await responseCustomer.json();
+const customer = resultCustomer?.data?.[0] || null;
+let customerId = customer?.customerId || null;
+
+// criar customer se não existir
+if (!customerId) {
   if (!name || !email) {
     return res.status(400).json({
       status: "erro",
@@ -113,20 +118,6 @@ if (startTime < "08:00" || startTime > "21:00") {
     return res.status(500).json(resultNewCustomer);
   }
 }
-
-if (!responseCustomer.ok) {
-  throw new Error(`Erro na Conexa (buscar customer): ${responseCustomer.status}`);
-}
-
-const resultCustomer = await responseCustomer.json();
-const customer = resultCustomer?.data?.[0] || null;
-let customerId = customer?.customerId || null;
-      customerId = resultNewCustomer?.id || null;
-
-      if (!customerId) {
-        return res.status(500).json(resultNewCustomer);
-      }
-    }
 
     // buscar person
     const urlPerson = `https://${subdominio}.conexa.app/index.php/api/v2/persons?cpf=${cpf}&limit=1&offset=0`;
