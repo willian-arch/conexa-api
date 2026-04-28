@@ -207,6 +207,52 @@ personId = resultNewPerson?.id || null;
       });
     }
 
+
+    // validar se o período inteiro está livre
+if (duracao > 1) {
+  const bookingDateTimeFrom = `${dataFormatada}T00:00:00-03:00`;
+  const bookingDateTimeTo = `${dataFormatada}T23:59:59-03:00`;
+
+  const urlVerificarDisponibilidade = `https://${subdominio}.conexa.app/index.php/api/v2/room/bookings?roomId[]=${roomId}&bookingDateTimeFrom=${encodeURIComponent(bookingDateTimeFrom)}&bookingDateTimeTo=${encodeURIComponent(bookingDateTimeTo)}&limit=100&offset=0`;
+
+  const responseDisponibilidade = await fetch(urlVerificarDisponibilidade, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!responseDisponibilidade.ok) {
+    throw new Error(`Erro na Conexa (verificar disponibilidade): ${responseDisponibilidade.status}`);
+  }
+
+  const resultDisponibilidade = await responseDisponibilidade.json();
+  const reservasDoDia = resultDisponibilidade?.data || [];
+
+  const inicioDesejado = startTime;
+  const fimDesejado = finalTime;
+
+  const conflito = reservasDoDia.some((reserva) => {
+    if (!reserva.startTime || !reserva.finalTime) return false;
+    if (reserva.isActive !== true) return false;
+    if (reserva.status === "cancelled") return false;
+
+    const inicioReserva = reserva.startTime.split("T")[1].slice(0, 5);
+    const fimReserva = reserva.finalTime.split("T")[1].slice(0, 5);
+
+    return inicioDesejado < fimReserva && fimDesejado > inicioReserva;
+  });
+
+  if (conflito) {
+    return res.status(200).json({
+      status: "periodo_indisponivel",
+      mensagem: `⚠️ Não há disponibilidade para ${duracao} horas consecutivas a partir de ${startTime}.\n\nPor favor, escolha outro horário ou uma duração menor.`
+    });
+  }
+}
+    
+    
     // criar reserva
     const urlReserva = `https://${subdominio}.conexa.app/index.php/api/v2/room/booking`;
 
