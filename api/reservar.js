@@ -19,8 +19,9 @@ if (data.includes("/")) {
   }
 }
     const startTime = req.query.startTime || "";
+const duracao = parseInt(req.query.duracao || "1", 10);
 
-    const horarioPermitido = /^([0-1]\d|2[0-3]):[0-5]\d$/.test(startTime);
+const horarioPermitido = /^([0-1]\d|2[0-3]):[0-5]\d$/.test(startTime);
 
 if (!horarioPermitido) {
   return res.status(200).json({
@@ -36,6 +37,12 @@ if (startTime < "08:00" || startTime > "21:00") {
   });
 }
 
+if (![1, 2, 3, 4].includes(duracao)) {
+  return res.status(200).json({
+    status: "duracao_invalida",
+    mensagem: "⚠️ Duração inválida.\n\nEscolha 1, 2, 3 ou 4 horas."
+  });
+}
     if (!cpf || !roomId || !data || !startTime) {
       return res.status(400).json({
         status: "erro",
