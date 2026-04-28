@@ -189,12 +189,13 @@ personId = resultNewPerson?.id || null;
       }
     }
 
-    // calcular finalTime (+1h)
+    // calcular finalTime conforme duração escolhida
     const [hour, minute] = startTime.split(":").map(Number);
+
     const inicio = new Date();
     inicio.setHours(hour, minute, 0, 0);
 
-    const fim = new Date(inicio.getTime() + 60 * 60 * 1000);
+    const fim = new Date(inicio.getTime() + duracao * 60 * 60 * 1000);
     const finalHour = String(fim.getHours()).padStart(2, "0");
     const finalMinute = String(fim.getMinutes()).padStart(2, "0");
     const finalTime = `${finalHour}:${finalMinute}`;
